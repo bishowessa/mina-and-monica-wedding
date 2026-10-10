@@ -32,9 +32,40 @@ const cormorant = Cormorant_Garamond({
   display: 'swap',
 })
 
+const siteUrl = 'https://mina-and-monica-wedding.vercel.app'
+const shareTitle = 'Mina & Monica'
+const shareDescription = 'دعوة زفاف · السبت ٣١ اكتوبر · الساعة ٧ · كنيسة مارجرجس هليوبوليس'
+const shareImage = {
+  url: `${siteUrl}/og-hero.jpg`,
+  width: 1080,
+  height: 1452,
+  alt: 'Mina & Monica',
+  type: 'image/jpeg',
+}
+
 export const metadata: Metadata = {
-  title: 'دعوة زفاف',
-  description: 'السبت ٣١ اكتوبر، الساعة ٧، كنيسة مارجرجس هليوبوليس',
+  metadataBase: new URL(siteUrl),
+  title: shareTitle,
+  description: shareDescription,
+  applicationName: shareTitle,
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'ar_EG',
+    url: siteUrl,
+    siteName: shareTitle,
+    title: shareTitle,
+    description: shareDescription,
+    images: [shareImage],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: shareTitle,
+    description: shareDescription,
+    images: [shareImage.url],
+  },
 }
 
 export const viewport: Viewport = {
