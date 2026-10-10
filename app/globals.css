@@ -1,0 +1,115 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-arabic), 'Amiri', 'Segoe UI', serif;
+  --font-serif: var(--font-serif), 'Cormorant Garamond', Georgia, serif;
+  --font-arabic: var(--font-arabic), 'Amiri', 'Segoe UI', serif;
+  --font-script: var(--font-script), 'Great Vibes', cursive;
+  --font-names: var(--font-names), 'Pinyon Script', cursive;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-burgundy: #5b1e2b;
+  --color-beige: #f9f5ef;
+}
+
+:root {
+  color-scheme: light;
+
+  --background: #f9f5ef;
+  --foreground: #5b1e2b;
+
+  --card: #f9f5ef;
+  --card-foreground: #5b1e2b;
+
+  --primary: #5b1e2b;
+  --primary-foreground: #f9f5ef;
+
+  --muted: #f3ebe3;
+  --muted-foreground: #8a4d59;
+
+  --accent: #5b1e2b;
+  --accent-foreground: #f9f5ef;
+
+  --border: #5b1e2b;
+  --input: #5b1e2b;
+  --ring: #5b1e2b;
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    @apply bg-background text-foreground font-sans;
+    margin: 0;
+    padding: 0;
+  }
+  ::selection {
+    background: #5b1e2b;
+    color: #f9f5ef;
+  }
+}
+
+@layer components {
+  .font-arabic {
+    font-family: var(--font-arabic), 'Amiri', 'Segoe UI', serif;
+  }
+
+  .font-serif {
+    font-family: var(--font-serif), 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .font-script {
+    font-family: var(--font-script), 'Great Vibes', cursive;
+  }
+
+  .font-names {
+    font-family: var(--font-names), 'Pinyon Script', cursive;
+  }
+
+  .animate-invitation-float {
+    animation: invitation-float 2.8s ease-in-out infinite;
+  }
+
+  /* Same 430px sheet on desktop as on a phone. */
+  .phone-screen {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: max(0px, calc((100vw - 430px) / 2));
+    width: min(100vw, 430px);
+  }
+
+  .phone-fab {
+    position: fixed;
+    right: max(1rem, calc((100vw - 430px) / 2 + 1rem));
+    bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@keyframes invitation-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
