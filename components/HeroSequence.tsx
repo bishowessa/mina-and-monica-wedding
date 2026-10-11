@@ -1,8 +1,8 @@
 'use client'
 
 import { Volume2, VolumeX } from 'lucide-react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useRef, useState, type RefObject } from 'react'
+import { motion } from 'framer-motion'
+import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react'
 import EnvelopeVideo from '@/components/EnvelopeVideo'
 import { COUPLE_CUTOUT } from '@/lib/assets'
 import { assetUrl } from '@/lib/asset-versions'
@@ -14,20 +14,27 @@ const MAP_URL =
 
 const CEREMONY_MS = new Date('2026-10-31T19:00:00+02:00').getTime()
 const MUSIC_VOLUME = 0.4
-const HOLD_MS = 2000
+const HOLD_MS = 2400
+const ENTER_MS = 700
+const MOVE_MS = 950
 
-const NAME_PARTS = [
-  { text: 'Mina', className: 'font-names text-[5.5rem] leading-[0.95] text-[#5B1E2B]' },
-  { text: '&', className: "font-[Arial,Helvetica,sans-serif] text-[2.75rem] leading-none font-medium not-italic text-[#5B1E2B]" },
-  { text: 'Monica', className: 'font-names text-[5.5rem] leading-[0.95] text-[#5B1E2B]' },
+const DETAILS = [
+  { ar: 'السبت ٣١ اكتوبر', en: 'Saturday, October 31st' },
+  { ar: 'الساعة ٧ مساءً', en: '7:00 PM' },
+  { ar: 'كنيسة مارجرجس هليوبوليس', en: 'St. George Church Heliopolis' },
 ] as const
-
-const DETAIL_LINES = ['السبت ٣١ اكتوبر', 'الساعة ٧', 'كنيسة مارجرجس هليوبوليس'] as const
 
 type HeroSequenceProps = {
   audioRef: RefObject<HTMLAudioElement | null>
   musicWantedRef: RefObject<boolean>
   onComplete: () => void
+}
+
+type Deltas = { names: number; details: number; verse: number }
+
+function offsetToCenter(element: HTMLElement) {
+  const rect = element.getBoundingClientRect()
+  return window.innerHeight / 2 - (rect.top + rect.height / 2)
 }
 
 function CountdownClock() {
@@ -51,11 +58,11 @@ function CountdownClock() {
   return (
     <div className="flex items-start justify-center gap-3" role="timer" aria-label="العد التنازلي للزفاف">
       {parts.map((part) => (
-        <div key={part.label} className="flex min-w-[3.4rem] flex-col items-center">
-          <span className="font-serif text-[1.85rem] leading-none tabular-nums text-[#F9F5EF]">
+        <div key={part.label} className="flex min-w-[3.2rem] flex-col items-center">
+          <span className="font-serif text-[1.55rem] leading-none tabular-nums text-[#F9F5EF]">
             {part.value == null ? '--' : String(part.value).padStart(2, '0')}
           </span>
-          <span className="mt-2 font-arabic text-[0.7rem] text-[#F9F5EF]/80">{part.label}</span>
+          <span className="mt-1.5 font-arabic text-[0.7rem] text-[#F9F5EF]/80">{part.label}</span>
         </div>
       ))}
     </div>
@@ -65,43 +72,64 @@ function CountdownClock() {
 export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: HeroSequenceProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const onCompleteRef = useRef(onComplete)
-  const photoHoldStarted = useRef(false)
-  const namesHoldStarted = useRef(false)
-  const locationHoldStarted = useRef(false)
-  const verseHoldStarted = useRef(false)
-  const revealStarted = useRef(false)
-  const holds = useRef<number[]>([])
+  const revealedScroll = useRef(false)
+  const namesRef = useRef<HTMLDivElement>(null)
+  const detailsRef = useRef<HTMLDivElement>(null)
+  const verseRef = useRef<HTMLDivElement>(null)
 
-  const [introScene, setIntroScene] = useState(0)
+  const [step, setStep] = useState(0)
+  const [deltas, setDeltas] = useState<Deltas | null>(null)
   const [awaitingClick, setAwaitingClick] = useState(true)
   const [muted, setMuted] = useState(true)
-  const [nameCount, setNameCount] = useState(1)
 
   onCompleteRef.current = onComplete
 
   useEffect(() => {
-    const timers = holds.current
-    return () => timers.forEach((id) => window.clearTimeout(id))
-  }, [])
-
-  const holdThen = (start: () => void) => {
-    const id = window.setTimeout(start, HOLD_MS)
-    holds.current.push(id)
-  }
-
-  useEffect(() => {
     const video = videoRef.current
-    if (!video || introScene !== 0) return
+    if (!video || step !== 0) return
 
     video.muted = true
     video.playsInline = true
     video.pause()
 
-    const onEnded = () => setIntroScene((current) => (current === 0 ? 1 : current))
+    const onEnded = () => setStep(1)
     video.addEventListener('ended', onEnded)
 
     return () => video.removeEventListener('ended', onEnded)
-  }, [introScene])
+  }, [step])
+
+  useEffect(() => {
+    if (step !== 1) return
+    const id = window.setTimeout(() => setStep(2), 700)
+    return () => window.clearTimeout(id)
+  }, [step])
+
+  useLayoutEffect(() => {
+    if (step !== 2 || deltas) return
+    const names = namesRef.current
+    const details = detailsRef.current
+    const verse = verseRef.current
+    if (!names || !details || !verse) return
+
+    setDeltas({
+      names: offsetToCenter(names),
+      details: offsetToCenter(details),
+      verse: offsetToCenter(verse),
+    })
+  }, [step, deltas])
+
+  useEffect(() => {
+    if (step < 2 || step > 6 || (step === 2 && !deltas)) return
+    const delay = step === 6 ? MOVE_MS : ENTER_MS + HOLD_MS
+    const id = window.setTimeout(() => setStep((current) => current + 1), delay)
+    return () => window.clearTimeout(id)
+  }, [step, deltas])
+
+  useEffect(() => {
+    if (step !== 7 || revealedScroll.current) return
+    revealedScroll.current = true
+    onCompleteRef.current()
+  }, [step])
 
   const openEnvelope = () => {
     if (!awaitingClick) return
@@ -124,7 +152,7 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
 
     const video = videoRef.current
     if (!video) {
-      setIntroScene(1)
+      setStep(1)
       return
     }
 
@@ -132,7 +160,7 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
     video.volume = 1
     void video.play().catch(() => {
       video.muted = true
-      void video.play().catch(() => setIntroScene(1))
+      void video.play().catch(() => setStep(1))
     })
   }
 
@@ -152,215 +180,199 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
         audio.pause()
       }
     }
-    if (video && introScene === 0) video.muted = nextMuted
+    if (video && step === 0) video.muted = nextMuted
     setMuted(nextMuted)
   }
 
+  const scrollToGuestbook = () => {
+    document.getElementById('guestbook')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const photoPose = step < 3 ? { opacity: 1, scale: 0.78 } : { opacity: 1, scale: 1 }
+
+  const namesPose = !deltas
+    ? { opacity: 0, y: 0, scale: 1.35 }
+    : step < 3
+      ? { opacity: 0, y: deltas.names, scale: 1.35 }
+      : step === 3
+        ? { opacity: 1, y: deltas.names, scale: 1.35 }
+        : { opacity: 1, y: 0, scale: 1 }
+
+  const detailsPose = !deltas
+    ? { opacity: 0, y: 0, scale: 1.12 }
+    : step < 4
+      ? { opacity: 0, y: deltas.details, scale: 1.12 }
+      : step === 4
+        ? { opacity: 1, y: deltas.details, scale: 1.12 }
+        : { opacity: 1, y: 0, scale: 1 }
+
+  const versePose = step < 5
+    ? { opacity: 0, y: 18, scale: 0.98 }
+    : { opacity: 1, y: 0, scale: 1 }
+
+  const finalePose = step >= 7 ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }
+  const uiReady = step >= 7
+
   return (
-    <section className="relative min-h-dvh w-full overflow-hidden bg-[#F9F5EF]" aria-label="دعوة الزفاف">
-      <AnimatePresence mode="wait">
-        {introScene === 0 && (
-          <motion.div
-            key="envelope"
-            className="absolute inset-0 bg-[#F9F5EF]"
-            initial={{ opacity: 1 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.9, ease: 'easeOut' }}
+    <section className="relative h-dvh w-full overflow-hidden bg-[#F9F5EF]" aria-label="دعوة الزفاف">
+      <motion.div
+        className={cn('absolute inset-0', step >= 2 && 'pointer-events-none')}
+        animate={{ opacity: step === 0 ? 1 : 0 }}
+        transition={{ duration: step === 0 ? 0 : 0.7, ease: 'easeOut' }}
+      >
+        <EnvelopeVideo ref={videoRef} />
+        {awaitingClick && (
+          <button
+            type="button"
+            onClick={openEnvelope}
+            className="absolute inset-0 z-30 flex cursor-pointer items-end justify-center bg-transparent pb-[15%] text-[#5B1E2B]"
+            aria-label="Open the envelope / افتح الظرف"
           >
-            <EnvelopeVideo ref={videoRef} />
-            {awaitingClick && (
-              <button
-                type="button"
-                onClick={openEnvelope}
-                className="absolute inset-0 z-30 flex cursor-pointer items-end justify-center bg-transparent pb-[15%] text-[#5B1E2B]"
-                aria-label="Open the envelope / افتح الظرف"
-              >
-                <span className="animate-invitation-float px-6 text-center">
-                  <span dir="ltr" className="inline-flex flex-wrap items-baseline justify-center gap-x-2">
-                    <span className="font-serif text-[1.02rem] tracking-[0.16em] uppercase">
-                      Open the envelope
-                    </span>
-                    <span aria-hidden="true" className="font-serif text-lg opacity-40">
-                      /
-                    </span>
-                    <span className="font-arabic text-[1.85rem] leading-none">افتح الظرف</span>
-                  </span>
+            <span className="animate-invitation-float px-6 text-center">
+              <span dir="ltr" className="inline-flex flex-wrap items-baseline justify-center gap-x-2">
+                <span className="font-serif text-[1.02rem] tracking-[0.16em] uppercase">
+                  Open the envelope
                 </span>
-              </button>
-            )}
-          </motion.div>
+                <span aria-hidden="true" className="font-serif text-lg opacity-40">
+                  /
+                </span>
+                <span className="font-arabic text-[1.85rem] leading-none">افتح الظرف</span>
+              </span>
+            </span>
+          </button>
         )}
+      </motion.div>
 
-        {introScene === 1 && (
+      {step >= 2 && (
+        <motion.div
+          className="absolute inset-0 z-0"
+          initial={{ opacity: 0, scale: 0.86 }}
+          animate={photoPose}
+          transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
+          style={{ originX: 0.5, originY: 0.5 }}
+        >
+          <img
+            src={assetUrl(COUPLE_CUTOUT)}
+            alt="Mina and Monica"
+            width={1856}
+            height={2304}
+            draggable={false}
+            className="h-full w-full object-cover object-[center_58%] select-none"
+          />
+        </motion.div>
+      )}
+
+      {step >= 2 && (
+        <motion.div
+          className="absolute inset-0 z-[1] bg-[#1a0c10]/50"
+          initial={false}
+          animate={{ opacity: step >= 3 ? 1 : 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          aria-hidden="true"
+        />
+      )}
+
+      {step >= 2 && (
+        <article className="relative z-10 flex h-full flex-col px-5 pt-8 pb-24 text-[#F9F5EF]">
           <motion.div
-            key="photo"
-            className="absolute inset-0 flex items-center justify-center bg-[#F9F5EF]"
-            initial={{ y: '100%', opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.7, ease: 'easeOut' } }}
-            transition={{ duration: 1.5, ease: 'easeOut' }}
-            onAnimationComplete={() => {
-              if (photoHoldStarted.current) return
-              photoHoldStarted.current = true
-              holdThen(() => setIntroScene(2))
-            }}
+            ref={namesRef}
+            dir="ltr"
+            className="mt-6 flex flex-nowrap items-baseline justify-center gap-x-2 whitespace-nowrap"
+            initial={false}
+            animate={namesPose}
+            transition={{ duration: step < 4 ? 0.7 : 0.95, ease: [0.16, 1, 0.3, 1] }}
+            style={{ originX: 0.5, originY: 0.5 }}
           >
-            <img
-              src={assetUrl(COUPLE_CUTOUT)}
-              alt="Mina and Monica"
-              width={1856}
-              height={2304}
-              draggable={false}
-              className="h-[72dvh] w-[84%] object-cover select-none"
-            />
+            <span className="font-names text-[2.85rem] leading-none">Mina</span>
+            <span className="font-[Arial,Helvetica,sans-serif] text-[1.45rem] leading-none font-medium not-italic">&amp;</span>
+            <span className="font-names text-[2.85rem] leading-none">Monica</span>
           </motion.div>
-        )}
 
-        {introScene === 2 && (
           <motion.div
-            key="names"
-            className="absolute inset-0 flex items-center justify-center bg-[#F9F5EF] px-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.45, ease: 'easeOut' }}
+            ref={detailsRef}
+            className="mt-4 flex flex-col items-center gap-1.5 text-center"
+            initial={false}
+            animate={detailsPose}
+            transition={{ duration: step < 5 ? 0.7 : 0.95, ease: [0.16, 1, 0.3, 1] }}
+            style={{ originX: 0.5, originY: 0.5 }}
           >
-            <div dir="ltr" className="flex flex-col items-center overflow-visible text-center">
-              {NAME_PARTS.slice(0, nameCount).map((part, index) => (
-                <motion.span
-                  key={part.text}
-                  className={part.className}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.28, ease: 'easeOut' }}
-                  onAnimationComplete={() => {
-                    if (index < NAME_PARTS.length - 1) {
-                      setNameCount(index + 2)
-                      return
-                    }
-                    if (namesHoldStarted.current) return
-                    namesHoldStarted.current = true
-                    holdThen(() => setIntroScene(3))
-                  }}
-                >
-                  {part.text}
-                </motion.span>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {introScene === 3 && (
-          <motion.div
-            key="location"
-            className="absolute inset-0 flex items-center justify-center bg-[#F9F5EF] px-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-            onAnimationComplete={() => {
-              if (locationHoldStarted.current) return
-              locationHoldStarted.current = true
-              holdThen(() => setIntroScene(4))
-            }}
-          >
-            <div dir="rtl" className="flex flex-col items-center gap-3 text-center text-[#5B1E2B]">
-              {DETAIL_LINES.map((line, index) => (
-                <p
-                  key={line}
-                  className={cn(
-                    'font-arabic',
-                    index === 0 ? 'text-[2rem] leading-tight' : 'text-[1.35rem] leading-snug',
-                  )}
-                >
-                  {line}
+            {DETAILS.map((line) => (
+              <div key={line.en}>
+                <p className="font-arabic text-[1.15rem] leading-snug">{line.ar}</p>
+                <p dir="ltr" className="font-serif text-[0.92rem] leading-snug tracking-wide text-[#F9F5EF]/75">
+                  {line.en}
                 </p>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {introScene === 4 && (
-          <motion.div
-            key="verse"
-            className="absolute inset-0 flex items-center justify-center bg-[#F9F5EF] px-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-            onAnimationComplete={() => {
-              if (verseHoldStarted.current) return
-              verseHoldStarted.current = true
-              holdThen(() => setIntroScene(5))
-            }}
-          >
-            <blockquote className="max-w-sm text-center">
-              <p dir="ltr" className="font-serif text-[1.55rem] leading-relaxed text-[#5B1E2B] italic">
-                And I have given them the glory that You gave Me, that they may be one just as We are one.
-              </p>
-              <footer dir="ltr" className="mt-6 font-serif text-sm tracking-[0.22em] text-[#5B1E2B]/70 uppercase">
-                John 17
-              </footer>
-            </blockquote>
-          </motion.div>
-        )}
-
-        {introScene === 5 && (
-          <motion.div
-            key="reveal"
-            className="relative min-h-dvh w-full"
-            initial={{ opacity: 1 }}
-            animate={{ opacity: 1 }}
-          >
-            <img
-              src={assetUrl(COUPLE_CUTOUT)}
-              alt=""
-              width={1856}
-              height={2304}
-              draggable={false}
-              className="absolute inset-0 h-full w-full object-cover select-none"
-            />
-            <div className="absolute inset-0 bg-black/40" />
-            <motion.div
-              className="relative z-10 flex min-h-dvh flex-col items-center justify-center px-6 py-16 text-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.9, ease: 'easeOut' }}
-              onAnimationStart={() => {
-                if (revealStarted.current) return
-                revealStarted.current = true
-                onCompleteRef.current()
-              }}
+              </div>
+            ))}
+            <a
+              href={MAP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                'mt-2 inline-flex rounded-full border border-[#F9F5EF] px-6 py-2 font-arabic text-base text-[#F9F5EF]',
+                step < 4 && 'pointer-events-none',
+              )}
             >
-              <div dir="ltr" className="flex flex-nowrap items-baseline justify-center gap-x-2 whitespace-nowrap text-[#F9F5EF]">
-                <span className="font-names text-[3.15rem] leading-none">Mina</span>
-                <span className="font-[Arial,Helvetica,sans-serif] text-[1.65rem] leading-none font-medium not-italic">&amp;</span>
-                <span className="font-names text-[3.15rem] leading-none">Monica</span>
-              </div>
-
-              <div dir="rtl" className="mt-8 flex flex-col items-center gap-2 text-[#F9F5EF]">
-                <p className="font-arabic text-[1.85rem] leading-tight">السبت ٣١ اكتوبر</p>
-                <p className="font-arabic text-[1.25rem] leading-snug">الساعة ٧</p>
-                <p className="font-arabic text-[1.25rem] leading-snug">كنيسة مارجرجس هليوبوليس</p>
-              </div>
-
-              <a
-                href={MAP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-7 inline-flex rounded-full border border-[#F9F5EF] px-6 py-2.5 font-arabic text-lg text-[#F9F5EF]"
-              >
-                عرض على الخريطة
-              </a>
-
-              <div className="mt-8">
-                <CountdownClock />
-              </div>
-            </motion.div>
+              عرض على الخريطة
+            </a>
           </motion.div>
-        )}
-      </AnimatePresence>
+
+          <motion.blockquote
+            ref={verseRef}
+            className="mx-auto mt-5 max-w-[22rem] text-center"
+            initial={false}
+            animate={versePose}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            style={{ originX: 0.5, originY: 0 }}
+          >
+            <p className="font-verse text-[1.22rem] leading-[1.95]">
+              وَأَنَا قَدْ أَعْطَيْتُهُمُ الْمَجْدَ الَّذِي أَعْطَيْتَنِي، لِيَكُونُوا وَاحِدًا كَمَا أَنَّنَا نَحْنُ وَاحِدٌ.
+            </p>
+            <p dir="ltr" className="mt-1.5 font-serif text-[0.98rem] leading-snug text-[#F9F5EF]/80 italic">
+              And I have given them the glory that You gave Me, that they may be one just as We are one.
+            </p>
+            <footer className="mt-2 flex items-baseline justify-center gap-x-2 text-[#F9F5EF]/70">
+              <span className="font-arabic text-sm">يوحنا ١٧</span>
+              <span dir="ltr" className="font-serif text-xs tracking-[0.22em] uppercase">
+                John 17
+              </span>
+            </footer>
+          </motion.blockquote>
+
+          <motion.div
+            className="mt-auto flex flex-col items-center"
+            initial={false}
+            animate={finalePose}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+          >
+            <CountdownClock />
+          </motion.div>
+        </article>
+      )}
+
+      {step >= 2 && (
+        <motion.div
+          className="absolute inset-x-0 bottom-4 z-20 flex justify-center px-4"
+          initial={false}
+          animate={finalePose}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+        >
+          <button
+            type="button"
+            onClick={scrollToGuestbook}
+            disabled={!uiReady}
+            className="inline-flex max-w-full flex-wrap items-center justify-center gap-x-2 rounded-full bg-[#1a0c10] px-6 py-3 text-center text-[#F9F5EF] shadow-[0_14px_34px_rgba(26,12,16,0.35)] disabled:cursor-default"
+          >
+            <span className="font-arabic text-lg leading-none">اترك رسالة للعروسين</span>
+            <span aria-hidden="true" className="opacity-50">
+              /
+            </span>
+            <span dir="ltr" className="font-serif text-[0.95rem] tracking-[0.06em]">
+              Write a Message
+            </span>
+          </button>
+        </motion.div>
+      )}
 
       <button
         type="button"

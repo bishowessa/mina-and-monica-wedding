@@ -49,7 +49,7 @@ export default function GuestbookForm() {
   }
 
   return (
-    <section id="guestbook" className="relative z-10 px-5 py-20" aria-labelledby="guestbook-title">
+    <section id="guestbook" className="relative z-10 scroll-mt-6 px-5 py-20" aria-labelledby="guestbook-title">
       <div className="mx-auto max-w-lg">
         <h2 id="guestbook-title" className="text-center font-arabic text-4xl text-[#5B1E2B]">
           اترك رسالة

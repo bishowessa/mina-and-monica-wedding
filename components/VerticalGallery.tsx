@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { assetUrl } from '@/lib/asset-versions'
 
-type GalleryImage = {
+export type GalleryImage = {
   src: string
   alt: string
   width?: number
@@ -31,7 +31,7 @@ export default function VerticalGallery({ images }: VerticalGalleryProps) {
             alt={image.alt}
             width={image.width}
             height={image.height}
-            className="w-full shrink-0 rounded-2xl shadow-lg"
+            className="aspect-[3/4] w-full shrink-0 rounded-2xl object-cover shadow-lg"
           />
         ))}
       </div>
@@ -40,6 +40,7 @@ export default function VerticalGallery({ images }: VerticalGalleryProps) {
 
   const copiesPerHalf = Math.max(1, Math.ceil(4 / images.length))
   const half = Array.from({ length: copiesPerHalf }, () => [...images]).flat()
+  const duration = Math.max(28, half.length * 3.2)
 
   return (
     <div
@@ -49,7 +50,7 @@ export default function VerticalGallery({ images }: VerticalGalleryProps) {
       <motion.div
         className="flex flex-col"
         animate={{ y: ['0%', '-50%'] }}
-        transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+        transition={{ duration, repeat: Infinity, ease: 'linear' }}
       >
         {[0, 1].map((copy) => (
           <div key={copy} className="flex flex-col gap-8 pb-8" aria-hidden={copy === 1}>
@@ -60,7 +61,7 @@ export default function VerticalGallery({ images }: VerticalGalleryProps) {
                 alt={copy === 0 && index < images.length ? image.alt : ''}
                 width={image.width}
                 height={image.height}
-                className="w-full shrink-0 rounded-2xl shadow-lg"
+                className="aspect-[3/4] w-full shrink-0 rounded-2xl object-cover shadow-lg"
               />
             ))}
           </div>

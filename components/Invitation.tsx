@@ -5,7 +5,6 @@ import { CloseLetterButton, CloseLetterOverlay } from '@/components/CloseLetter'
 import GuestbookForm from '@/components/GuestbookForm'
 import HeroSequence from '@/components/HeroSequence'
 import PhotoGallery from '@/components/PhotoGallery'
-import VerseSection from '@/components/VerseSection'
 import { assetUrl } from '@/lib/asset-versions'
 
 const MUSIC_VOLUME = 0.4
@@ -83,7 +82,7 @@ export default function Invitation() {
 
   return (
     <div className="relative isolate min-h-dvh bg-[#F9F5EF] text-[#5B1E2B]">
-      <h1 className="sr-only">Mina &amp; Monica، السبت ٣١ اكتوبر، الساعة ٧، كنيسة مارجرجس هليوبوليس</h1>
+      <h1 className="sr-only">Mina &amp; Monica، السبت ٣١ اكتوبر، الساعة ٧ مساءً، كنيسة مارجرجس هليوبوليس</h1>
       <audio
         ref={audioRef}
         src={assetUrl('/bg-music.mp3')}
@@ -98,7 +97,6 @@ export default function Invitation() {
       />
       {scrollUnlocked && (
         <>
-          <VerseSection />
           <GuestbookForm />
           <PhotoGallery />
           {letter === 'open' && <CloseLetterButton label="أغلق الرسالة" onClick={handleToggleLetter} />}

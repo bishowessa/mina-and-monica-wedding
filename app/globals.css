@@ -9,6 +9,7 @@
   --font-arabic: var(--font-arabic), 'Amiri', 'Segoe UI', serif;
   --font-script: var(--font-script), 'Great Vibes', cursive;
   --font-names: var(--font-names), 'Pinyon Script', cursive;
+  --font-verse: var(--font-verse), 'Scheherazade New', 'Amiri', serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -82,6 +83,10 @@
 
   .font-names {
     font-family: var(--font-names), 'Pinyon Script', cursive;
+  }
+
+  .font-verse {
+    font-family: var(--font-verse), 'Scheherazade New', 'Amiri', serif;
   }
 
   .animate-invitation-float {

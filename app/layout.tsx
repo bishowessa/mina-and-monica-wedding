@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Analytics } from '@vercel/analytics/react'
-import { Amiri, Cormorant_Garamond, Great_Vibes, Pinyon_Script } from 'next/font/google'
+import { Amiri, Cormorant_Garamond, Great_Vibes, Pinyon_Script, Scheherazade_New } from 'next/font/google'
 import './globals.css'
 
 const amiri = Amiri({
@@ -21,6 +21,13 @@ const script = Great_Vibes({
   subsets: ['latin'],
   weight: '400',
   variable: '--font-script',
+  display: 'swap',
+})
+
+const verse = Scheherazade_New({
+  subsets: ['arabic', 'latin'],
+  weight: ['400', '700'],
+  variable: '--font-verse',
   display: 'swap',
 })
 
@@ -80,7 +87,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ar" dir="rtl" className={`${amiri.variable} ${cormorant.variable} ${names.variable} ${script.variable} bg-background`}>
+    <html lang="ar" dir="rtl" className={`${amiri.variable} ${cormorant.variable} ${names.variable} ${script.variable} ${verse.variable} bg-background`}>
       <body className="min-h-dvh bg-[#F9F5EF] font-arabic text-[#5B1E2B] antialiased">
         {children}
         <Analytics />
