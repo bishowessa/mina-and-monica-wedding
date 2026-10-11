@@ -75,7 +75,7 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
   const revealedScroll = useRef(false)
   const namesRef = useRef<HTMLDivElement>(null)
   const detailsRef = useRef<HTMLDivElement>(null)
-  const verseRef = useRef<HTMLDivElement>(null)
+  const verseRef = useRef<HTMLQuoteElement>(null)
 
   const [step, setStep] = useState(0)
   const [deltas, setDeltas] = useState<Deltas | null>(null)
