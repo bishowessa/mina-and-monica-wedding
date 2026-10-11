@@ -54,7 +54,6 @@ export default function GuestbookForm() {
         <h2 id="guestbook-title" className="text-center font-arabic text-4xl text-[#5B1E2B]">
           اترك رسالة
         </h2>
-        <p className="mt-3 text-center font-arabic text-lg text-[#5B1E2B]/75">شاركونا بكلمة تبقى معهم</p>
 
         <form
           onSubmit={handleSubmit}

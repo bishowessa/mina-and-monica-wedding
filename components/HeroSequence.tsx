@@ -1,6 +1,6 @@
 'use client'
 
-import { Volume2, VolumeX } from 'lucide-react'
+import { Images, Volume2, VolumeX } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react'
 import EnvelopeVideo from '@/components/EnvelopeVideo'
@@ -59,10 +59,10 @@ function CountdownClock() {
     <div className="flex items-start justify-center gap-3" role="timer" aria-label="العد التنازلي للزفاف">
       {parts.map((part) => (
         <div key={part.label} className="flex min-w-[3.2rem] flex-col items-center">
-          <span className="font-serif text-[1.55rem] leading-none tabular-nums text-[#F9F5EF]">
+          <span className="font-serif text-[1.55rem] leading-none tabular-nums text-[#5B1E2B]">
             {part.value == null ? '--' : String(part.value).padStart(2, '0')}
           </span>
-          <span className="mt-1.5 font-arabic text-[0.7rem] text-[#F9F5EF]/80">{part.label}</span>
+          <span className="mt-1.5 font-arabic text-[0.7rem] text-[#5B1E2B]/75">{part.label}</span>
         </div>
       ))}
     </div>
@@ -188,6 +188,10 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
     document.getElementById('guestbook')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  const scrollToGallery = () => {
+    document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   const photoPose = step < 3 ? { opacity: 1, scale: 0.78 } : { opacity: 1, scale: 1 }
 
   const namesPose = !deltas
@@ -277,15 +281,15 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
           <motion.div
             ref={namesRef}
             dir="ltr"
-            className="mt-6 flex flex-nowrap items-baseline justify-center gap-x-2 whitespace-nowrap"
+            className="mt-6 flex flex-nowrap items-baseline justify-center gap-x-1.5 whitespace-nowrap"
             initial={false}
             animate={namesPose}
             transition={{ duration: step < 4 ? 0.7 : 0.95, ease: [0.16, 1, 0.3, 1] }}
             style={{ originX: 0.5, originY: 0.5 }}
           >
-            <span className="font-names text-[2.85rem] leading-none">Mina</span>
-            <span className="font-[Arial,Helvetica,sans-serif] text-[1.45rem] leading-none font-medium not-italic">&amp;</span>
-            <span className="font-names text-[2.85rem] leading-none">Monica</span>
+            <span className="font-names text-[3.35rem] leading-none">Mina</span>
+            <span className="font-[Arial,Helvetica,sans-serif] text-[1.7rem] leading-none font-medium not-italic">&amp;</span>
+            <span className="font-names text-[3.35rem] leading-none">Monica</span>
           </motion.div>
 
           <motion.div
@@ -299,7 +303,7 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
             {DETAILS.map((line) => (
               <div key={line.en}>
                 <p className="font-arabic text-[1.15rem] leading-snug">{line.ar}</p>
-                <p dir="ltr" className="font-serif text-[0.92rem] leading-snug tracking-wide text-[#F9F5EF]/75">
+                <p dir="ltr" className="font-serif text-[1.08rem] leading-snug tracking-wide text-[#F9F5EF]/90">
                   {line.en}
                 </p>
               </div>
@@ -345,14 +349,16 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
             animate={finalePose}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            <CountdownClock />
+            <div className="rounded-2xl border border-[#5B1E2B]/30 bg-[#F9F5EF]/92 p-4 shadow-sm">
+              <CountdownClock />
+            </div>
           </motion.div>
         </article>
       )}
 
       {step >= 2 && (
         <motion.div
-          className="absolute inset-x-0 bottom-4 z-20 flex justify-center px-4"
+          className="absolute inset-x-0 bottom-4 z-20 flex flex-row flex-wrap items-center justify-center gap-4 px-4"
           initial={false}
           animate={finalePose}
           transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -361,15 +367,24 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
             type="button"
             onClick={scrollToGuestbook}
             disabled={!uiReady}
-            className="inline-flex max-w-full flex-wrap items-center justify-center gap-x-2 rounded-full bg-[#1a0c10] px-6 py-3 text-center text-[#F9F5EF] shadow-[0_14px_34px_rgba(26,12,16,0.35)] disabled:cursor-default"
+            className="inline-flex items-center justify-center gap-x-1.5 rounded-full border border-[#5B1E2B] bg-[#5B1E2B] px-4 py-2.5 text-center text-[#F9F5EF] shadow-sm disabled:cursor-default"
           >
-            <span className="font-arabic text-lg leading-none">اترك رسالة للعروسين</span>
+            <span className="font-arabic text-base leading-none">اكتبلنا رسالة</span>
             <span aria-hidden="true" className="opacity-50">
               /
             </span>
-            <span dir="ltr" className="font-serif text-[0.95rem] tracking-[0.06em]">
+            <span dir="ltr" className="font-serif text-[0.85rem] tracking-[0.04em]">
               Write a Message
             </span>
+          </button>
+          <button
+            type="button"
+            onClick={scrollToGallery}
+            disabled={!uiReady}
+            className="inline-flex items-center justify-center gap-x-1.5 rounded-full border border-[#5B1E2B] bg-[#F9F5EF] px-4 py-2.5 text-[#5B1E2B] shadow-sm disabled:cursor-default"
+          >
+            <Images className="size-4 shrink-0" aria-hidden="true" />
+            <span className="font-arabic text-base leading-none">ألبوم الصور</span>
           </button>
         </motion.div>
       )}
