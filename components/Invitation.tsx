@@ -82,7 +82,7 @@ export default function Invitation() {
 
   return (
     <div className="relative isolate min-h-dvh bg-[#F9F5EF] text-[#5B1E2B]">
-      <h1 className="sr-only">Mina &amp; Monica، السبت ٣١ اكتوبر، الساعة ٧ مساءً، كنيسة مارجرجس هليوبوليس</h1>
+      <h1 className="sr-only">Mina &amp; Monica، السبت ٣١ اكتوبر، الساعة ٧ مساءً، كنيسة الشهيد العظيم مارجرجس بهليوبوليس - مصر الجديدة</h1>
       <audio
         ref={audioRef}
         src={assetUrl('/bg-music.mp3')}
@@ -99,7 +99,7 @@ export default function Invitation() {
         <>
           <GuestbookForm />
           <PhotoGallery />
-          {letter === 'open' && <CloseLetterButton label="أغلق الرسالة" onClick={handleToggleLetter} />}
+          {letter === 'open' && <CloseLetterButton label="Close" onClick={handleToggleLetter} />}
         </>
       )}
       {letter !== 'open' && (

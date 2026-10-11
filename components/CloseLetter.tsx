@@ -17,7 +17,10 @@ export function CloseLetterButton({ label, onClick, floating = false }: CloseLet
     <button
       type="button"
       onClick={onClick}
-      className="pointer-events-auto rounded-full border border-[#5B1E2B] bg-[#F9F5EF] px-10 py-3 font-arabic text-lg text-[#5B1E2B] transition hover:bg-[#5B1E2B] hover:text-[#F9F5EF]"
+      className={cn(
+        'pointer-events-auto rounded-full border border-[#5B1E2B] bg-[#F9F5EF] px-10 py-3 text-lg text-[#5B1E2B] transition hover:bg-[#5B1E2B] hover:text-[#F9F5EF]',
+        floating ? 'font-arabic' : 'font-serif font-semibold tracking-[0.08em]',
+      )}
     >
       {label}
     </button>

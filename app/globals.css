@@ -75,6 +75,7 @@
 
   .font-serif {
     font-family: var(--font-serif), 'Cormorant Garamond', Georgia, serif;
+    font-weight: 600;
   }
 
   .font-script {
