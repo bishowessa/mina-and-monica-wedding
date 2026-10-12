@@ -1,6 +1,6 @@
 'use client'
 
-import { Cross, Heart, Images, MapPin, Volume2, VolumeX } from 'lucide-react'
+import { Cross, Heart, Images, Mail, MapPin, Volume2, VolumeX } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react'
 import EnvelopeVideo from '@/components/EnvelopeVideo'
@@ -394,6 +394,13 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
                 disabled={step < 8}
                 className="inline-flex items-center justify-center gap-x-1.5 rounded-full border border-[#5B1E2B] bg-[#5B1E2B] px-3.5 py-2 text-[#F9F5EF] shadow-sm disabled:cursor-default"
               >
+                <motion.span
+                  className="flex shrink-0"
+                  animate={{ y: [-2, 2], rotate: [-6, 6] }}
+                  transition={{ duration: 1.6, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+                >
+                  <Mail className="size-4" aria-hidden="true" />
+                </motion.span>
                 <span className="font-arabic text-lg leading-none">اكتبلنا رسالة</span>
                 <span aria-hidden="true" className="opacity-50">
                   /

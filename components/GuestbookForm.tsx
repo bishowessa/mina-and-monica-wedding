@@ -2,6 +2,7 @@
 
 import { createAutograph } from '@/actions/guestbook'
 import { AnimatePresence, motion } from 'framer-motion'
+import { Mail } from 'lucide-react'
 import { useEffect, useState, type FormEvent } from 'react'
 
 export default function GuestbookForm() {
@@ -51,7 +52,14 @@ export default function GuestbookForm() {
   return (
     <section id="guestbook" className="relative z-10 scroll-mt-6 px-5 py-20" aria-labelledby="guestbook-title">
       <div className="mx-auto max-w-lg">
-        <h2 id="guestbook-title" className="text-center font-arabic text-6xl text-[#5B1E2B]">
+        <h2 id="guestbook-title" className="flex items-center justify-center gap-3 text-center font-arabic text-6xl text-[#5B1E2B]">
+          <motion.span
+            className="flex shrink-0"
+            animate={{ y: [-2, 2], rotate: [-6, 6] }}
+            transition={{ duration: 1.6, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+          >
+            <Mail className="size-16" aria-hidden="true" />
+          </motion.span>
           اكتبلنا رسالة
         </h2>
 
