@@ -65,10 +65,10 @@ function CountdownClock() {
     <div className="flex items-start justify-center gap-2.5" role="timer" aria-label="العد التنازلي للزفاف">
       {parts.map((part) => (
         <div key={part.label} className="flex min-w-[3rem] flex-col items-center">
-          <span className="font-serif text-[1.45rem] leading-none font-semibold text-[#5B1E2B] [font-variant-numeric:lining-nums_tabular-nums]">
+          <span className="font-serif text-[1.65rem] leading-none font-semibold text-[#5B1E2B] [font-variant-numeric:lining-nums_tabular-nums]">
             {part.value == null ? '--' : String(part.value).padStart(2, '0')}
           </span>
-          <span className="mt-1 font-arabic text-xs leading-none text-[#5B1E2B]/80">{part.label}</span>
+          <span className="mt-1 font-arabic text-sm leading-none text-[#5B1E2B]/80">{part.label}</span>
         </div>
       ))}
     </div>
@@ -136,7 +136,7 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
 
   useEffect(() => {
     if (step < 2 || step > 7 || (step === 2 && !deltas)) return
-    const delay = step === 7 ? MOVE_MS : ENTER_MS + HOLD_MS
+    const delay = step === 7 ? MOVE_MS : step === 2 ? 2800 : ENTER_MS + HOLD_MS
     const id = window.setTimeout(() => setStep((current) => current + 1), delay)
     return () => window.clearTimeout(id)
   }, [step, deltas])
@@ -214,7 +214,6 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
   const whenPose = flyPose(Boolean(deltas), step, 5, deltas?.when ?? 0, 1.1)
   const churchPose = flyPose(Boolean(deltas), step, 6, deltas?.church ?? 0, 1.08)
   const finalePose = step >= 8 ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }
-  const photoPose = step < 3 ? { opacity: 1, scale: 0.78 } : { opacity: 1, scale: 1 }
 
   return (
     <section className="relative h-dvh w-full overflow-hidden bg-[#F9F5EF]" aria-label="دعوة الزفاف">
@@ -233,13 +232,13 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
           >
             <span className="animate-invitation-float px-6 text-center">
               <span dir="ltr" className="inline-flex flex-wrap items-baseline justify-center gap-x-2">
-                <span className="font-serif text-[1.08rem] font-semibold tracking-[0.14em] uppercase">
+                <span className="font-serif text-[1.2rem] font-semibold tracking-[0.14em] uppercase">
                   Open the envelope
                 </span>
                 <span aria-hidden="true" className="font-serif text-lg opacity-40">
                   /
                 </span>
-                <span className="font-arabic text-[1.95rem] leading-none">افتح الظرف</span>
+                <span className="font-arabic text-[2.15rem] leading-none">افتح الظرف</span>
               </span>
             </span>
           </button>
@@ -249,10 +248,9 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
       {step >= 2 && (
         <motion.div
           className="absolute inset-0 z-0"
-          initial={{ opacity: 0, scale: 0.86 }}
-          animate={photoPose}
-          transition={{ duration: 0.95, ease: EASE }}
-          style={{ originX: 0.5, originY: 0.5 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2.2, ease: 'easeInOut' }}
         >
           <img
             src={assetUrl(COUPLE_CUTOUT)}
@@ -267,10 +265,10 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
 
       {step >= 2 && (
         <motion.div
-          className="absolute inset-0 z-[1] bg-[#1a0c10]/55"
+          className="absolute inset-0 z-[1] bg-black/70"
           initial={false}
           animate={{ opacity: step >= 3 ? 1 : 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
           aria-hidden="true"
         />
       )}
@@ -290,15 +288,15 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
               <Heart className="absolute size-3 fill-[#F9F5EF] text-[#F9F5EF]" strokeWidth={1.5} />
             </div>
             <blockquote className="mx-auto mt-2 max-w-[22rem]">
-              <p className="font-verse text-[1.2rem] leading-[1.7]">
+              <p className="font-verse text-[1.35rem] leading-[1.75]">
                 وَأَنَا قَدْ أَعْطَيْتُهُمُ الْمَجْدَ الَّذِي أَعْطَيْتَنِي، لِيَكُونُوا وَاحِدًا كَمَا أَنَّنَا نَحْنُ وَاحِدٌ.
               </p>
-              <p dir="ltr" className="mt-1 font-serif text-[1.02rem] leading-snug font-semibold italic">
+              <p dir="ltr" className="mt-1 font-serif text-[1.15rem] leading-snug font-semibold italic">
                 And I have given them the glory that You gave Me, that they may be one just as We are one.
               </p>
               <footer className="mt-1 flex items-baseline justify-center gap-x-2 text-[#F9F5EF]/80">
-                <span className="font-arabic text-sm">يوحنا ١٧</span>
-                <span dir="ltr" className="font-serif text-xs font-semibold tracking-[0.18em] uppercase">
+                <span className="font-arabic text-base">يوحنا ١٧</span>
+                <span dir="ltr" className="font-serif text-sm font-semibold tracking-[0.18em] uppercase">
                   John 17
                 </span>
               </footer>
@@ -314,9 +312,9 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
             transition={{ duration: step === 4 ? 0.7 : 0.95, ease: EASE }}
             style={{ originX: 0.5, originY: 0.5 }}
           >
-            <span className="font-names text-[3.15rem] leading-none">Mina</span>
-            <span className="font-[Arial,Helvetica,sans-serif] text-[1.55rem] leading-none font-medium not-italic">&amp;</span>
-            <span className="font-names text-[3.15rem] leading-none">Monica</span>
+            <span className="font-names text-[3.35rem] leading-none">Mina</span>
+            <span className="font-[Arial,Helvetica,sans-serif] text-[1.7rem] leading-none font-medium not-italic">&amp;</span>
+            <span className="font-names text-[3.35rem] leading-none">Monica</span>
           </motion.div>
 
           <motion.div
@@ -329,8 +327,8 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
           >
             {WHEN.map((line) => (
               <div key={line.en}>
-                <p className="font-arabic text-[1.2rem] leading-tight">{line.ar}</p>
-                <p dir="ltr" className="font-serif text-[1.08rem] leading-tight font-semibold tracking-wide">
+                <p className="font-arabic text-[1.35rem] leading-tight">{line.ar}</p>
+                <p dir="ltr" className="font-serif text-[1.2rem] leading-tight font-semibold tracking-wide">
                   {line.en}
                 </p>
               </div>
@@ -346,10 +344,10 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
             style={{ originX: 0.5, originY: 0.5 }}
           >
             <div className="min-w-0 text-center">
-              <p className="whitespace-nowrap font-arabic text-[clamp(0.66rem,3.15cqi,0.95rem)] leading-none">
+              <p className="whitespace-nowrap font-arabic text-[clamp(0.72rem,3.35cqi,1.05rem)] leading-none">
                 كنيسة الشهيد العظيم مارجرجس بهليوبوليس - مصر الجديدة
               </p>
-              <p dir="ltr" className="mt-0.5 font-serif text-[1.05rem] leading-tight font-semibold tracking-wide">
+              <p dir="ltr" className="mt-0.5 font-serif text-[1.15rem] leading-tight font-semibold tracking-wide">
                 St. George Church Heliopolis
               </p>
             </div>
@@ -383,11 +381,11 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
                 disabled={step < 8}
                 className="inline-flex items-center justify-center gap-x-1.5 rounded-full border border-[#5B1E2B] bg-[#5B1E2B] px-3.5 py-2 text-[#F9F5EF] shadow-sm disabled:cursor-default"
               >
-                <span className="font-arabic text-base leading-none">اكتبلنا رسالة</span>
+                <span className="font-arabic text-lg leading-none">اكتبلنا رسالة</span>
                 <span aria-hidden="true" className="opacity-50">
                   /
                 </span>
-                <span dir="ltr" className="font-serif text-[0.8rem] font-semibold tracking-[0.03em]">
+                <span dir="ltr" className="font-serif text-[0.95rem] font-semibold tracking-[0.03em]">
                   Write a Message
                 </span>
               </button>
@@ -398,7 +396,7 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
                 className="inline-flex items-center justify-center gap-x-1.5 rounded-full border border-[#5B1E2B] bg-[#F9F5EF] px-3.5 py-2 text-[#5B1E2B] shadow-sm disabled:cursor-default"
               >
                 <Images className="size-4 shrink-0" aria-hidden="true" />
-                <span className="font-arabic text-base leading-none">ألبوم الصور</span>
+                <span className="font-arabic text-lg leading-none">ألبوم الصور</span>
               </button>
             </div>
           </motion.div>

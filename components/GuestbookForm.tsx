@@ -51,7 +51,7 @@ export default function GuestbookForm() {
   return (
     <section id="guestbook" className="relative z-10 scroll-mt-6 px-5 py-20" aria-labelledby="guestbook-title">
       <div className="mx-auto max-w-lg">
-        <h2 id="guestbook-title" className="text-center font-arabic text-5xl text-[#5B1E2B]">
+        <h2 id="guestbook-title" className="text-center font-arabic text-6xl text-[#5B1E2B]">
           اترك رسالة
         </h2>
 
@@ -61,7 +61,7 @@ export default function GuestbookForm() {
           className="mt-10 flex flex-col gap-5 rounded-[1.75rem] border border-[#5B1E2B]/20 bg-[#F9F5EF] px-5 py-8"
         >
           <label className="flex flex-col gap-2" htmlFor="guest-name">
-            <span className="font-arabic text-xl text-[#5B1E2B]">الاسم</span>
+            <span className="font-arabic text-2xl text-[#5B1E2B]">الاسم</span>
             <input
               id="guest-name"
               name="name"
@@ -73,12 +73,12 @@ export default function GuestbookForm() {
               dir="auto"
               disabled={pending}
               placeholder="اسمك"
-              className="w-full rounded-2xl border border-[#5B1E2B] bg-[#F9F5EF] px-4 py-3 font-arabic text-xl text-[#5B1E2B] outline-none placeholder:text-[#5B1E2B]/40 focus:ring-2 focus:ring-[#5B1E2B]/25 disabled:opacity-60"
+              className="w-full rounded-2xl border border-[#5B1E2B] bg-[#F9F5EF] px-4 py-3 font-arabic text-2xl text-[#5B1E2B] outline-none placeholder:text-[#5B1E2B]/40 focus:ring-2 focus:ring-[#5B1E2B]/25 disabled:opacity-60"
             />
           </label>
 
           <label className="flex flex-col gap-2" htmlFor="guest-message">
-            <span className="font-arabic text-xl text-[#5B1E2B]">الرسالة</span>
+            <span className="font-arabic text-2xl text-[#5B1E2B]">الرسالة</span>
             <textarea
               id="guest-message"
               name="message"
@@ -90,7 +90,7 @@ export default function GuestbookForm() {
               dir="auto"
               disabled={pending}
               placeholder="اكتب رسالتك هنا"
-              className="w-full resize-none rounded-2xl border border-[#5B1E2B] bg-[#F9F5EF] px-4 py-3 font-arabic text-xl text-[#5B1E2B] outline-none placeholder:text-[#5B1E2B]/40 focus:ring-2 focus:ring-[#5B1E2B]/25 disabled:opacity-60"
+              className="w-full resize-none rounded-2xl border border-[#5B1E2B] bg-[#F9F5EF] px-4 py-3 font-arabic text-2xl text-[#5B1E2B] outline-none placeholder:text-[#5B1E2B]/40 focus:ring-2 focus:ring-[#5B1E2B]/25 disabled:opacity-60"
             />
           </label>
 
@@ -103,7 +103,7 @@ export default function GuestbookForm() {
           <button
             type="submit"
             disabled={pending}
-            className="mt-1 inline-flex h-14 items-center justify-center rounded-full bg-[#5B1E2B] px-8 font-arabic text-xl text-[#F9F5EF] transition hover:bg-[#471722] disabled:cursor-wait disabled:opacity-60"
+            className="mt-1 inline-flex h-14 items-center justify-center rounded-full bg-[#5B1E2B] px-8 font-arabic text-2xl text-[#F9F5EF] transition hover:bg-[#471722] disabled:cursor-wait disabled:opacity-60"
           >
             {pending ? 'جاري الإرسال…' : 'إرسال'}
           </button>
