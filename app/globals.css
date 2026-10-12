@@ -94,6 +94,10 @@
     animation: invitation-float 2.8s ease-in-out infinite;
   }
 
+  .animate-point-right {
+    animation: point-right 1.15s ease-in-out infinite;
+  }
+
   /* Same 430px sheet on desktop as on a phone. */
   .phone-screen {
     position: fixed;
@@ -117,5 +121,15 @@
   }
   50% {
     transform: translateY(-8px);
+  }
+}
+
+@keyframes point-right {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
   }
 }

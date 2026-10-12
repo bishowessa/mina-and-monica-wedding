@@ -11,43 +11,64 @@ const SHAPES = [
   {
     name: 'circle',
     clip: 'circle(50% at 50% 50%)',
-    pad: '18% 16%',
+    content: '70%',
+    align: 'center',
+    padBottom: '0px',
+    usable: 0.64,
   },
   {
     name: 'triangle',
     clip: 'polygon(50% 0%, 100% 100%, 0% 100%)',
-    pad: '34% 16% 10%',
+    content: '46%',
+    align: 'flex-end',
+    padBottom: '8%',
+    usable: 0.4,
   },
   {
     name: 'pentagon',
     clip: 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',
-    pad: '22% 16% 12%',
+    content: '60%',
+    align: 'center',
+    padBottom: '0px',
+    usable: 0.54,
   },
   {
     name: 'hexagon',
     clip: 'polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0% 50%)',
-    pad: '16% 18%',
+    content: '58%',
+    align: 'center',
+    padBottom: '0px',
+    usable: 0.56,
   },
   {
     name: 'diamond',
     clip: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
-    pad: '28% 20%',
+    content: '48%',
+    align: 'center',
+    padBottom: '0px',
+    usable: 0.44,
   },
 ] as const
 
 const FILLS = [
-  { background: '#5B1E2B', color: '#F9F5EF' },
-  { background: '#F3E6D8', color: '#5B1E2B' },
-  { background: '#7A2E3E', color: '#F9F5EF' },
-  { background: '#E7D5C3', color: '#5B1E2B' },
+  { background: '#5B1E2B', color: '#F9F5EF', name: '#F0C14D' },
+  { background: '#F3E6D8', color: '#5B1E2B', name: '#8A5A12' },
+  { background: '#7A2E3E', color: '#F9F5EF', name: '#F0C14D' },
+  { background: '#E7D5C3', color: '#5B1E2B', name: '#8A5A12' },
 ] as const
 
 const TILTS = [-7, 4, -3, 6, -5, 3, 5, -4]
 
-function widthFor(message: string) {
-  if (message.length > 280) return '17.5rem'
-  if (message.length > 140) return '16rem'
-  return '14.5rem'
+function cardSize(message: string, contentRatio: number, usable: number) {
+  let size = 200
+  for (let pass = 0; pass < 4; pass += 1) {
+    const column = size * contentRatio
+    const perLine = Math.max(6, Math.floor(column / 8.4))
+    const lines = Math.max(1, Math.ceil(message.length / perLine)) + 2
+    const textHeight = lines * 24 + 10
+    size = Math.max(200, Math.min(320, Math.ceil(textHeight / usable)))
+  }
+  return `${size}px`
 }
 
 export default function AutographWall({ autographs }: { autographs: AutographCard[] }) {
@@ -78,27 +99,36 @@ export default function AutographWall({ autographs }: { autographs: AutographCar
                 : SHAPES[index % SHAPES.length]
             const fill = FILLS[index % FILLS.length]
             const tilt = TILTS[index % TILTS.length]
+            const size = cardSize(autograph.message, parseFloat(shape.content) / 100, shape.usable)
 
             return (
               <li key={autograph.id} className="list-none">
                 <article
-                  className="flex items-center justify-center text-center shadow-none transition duration-300 hover:rotate-0"
+                  className="flex justify-center text-center shadow-none transition duration-300 hover:rotate-0"
                   style={{
-                    width: widthFor(autograph.message),
-                    minHeight: widthFor(autograph.message),
+                    width: size,
+                    height: size,
                     clipPath: shape.clip,
-                    padding: shape.pad,
+                    alignItems: shape.align,
+                    paddingBottom: shape.padBottom,
                     background: fill.background,
                     color: fill.color,
                     transform: `rotate(${tilt}deg)`,
                     filter: 'drop-shadow(0 16px 22px rgba(91, 30, 43, 0.16))',
                   }}
                 >
-                  <div className="flex w-full flex-col items-center gap-3">
-                    <p dir="auto" className="font-arabic text-[1.05rem] leading-relaxed break-words">
+                  <div className="flex flex-col items-center gap-2" style={{ width: shape.content }}>
+                    <p
+                      dir="auto"
+                      className="w-full font-arabic text-[1.05rem] leading-relaxed break-words [overflow-wrap:anywhere]"
+                    >
                       {autograph.message}
                     </p>
-                    <p dir="auto" className="font-arabic text-xl leading-none">
+                    <p
+                      dir="auto"
+                      className="w-full font-arabic text-lg leading-tight break-words [overflow-wrap:anywhere]"
+                      style={{ color: fill.name }}
+                    >
                       {autograph.name}
                     </p>
                     <time className="font-serif text-xs tracking-[0.14em] uppercase opacity-70" dateTime={autograph.createdAt}>

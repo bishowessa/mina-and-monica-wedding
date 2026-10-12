@@ -355,13 +355,29 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
               href={MAP_URL}
               target="_blank"
               rel="noopener noreferrer"
+              dir="ltr"
               aria-label="عرض الكنيسة على الخريطة"
               className={cn(
-                'inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-[#F9F5EF] text-[#F9F5EF]',
+                'flex shrink-0 cursor-pointer items-center gap-1.5',
                 step < 6 && 'pointer-events-none',
               )}
             >
-              <MapPin className="size-4" aria-hidden="true" />
+              <span className="animate-point-right text-lg leading-none" aria-hidden="true">
+                👉
+              </span>
+              <span className="relative inline-flex size-9 items-center justify-center rounded-full border border-[#F9F5EF] text-[#F9F5EF] transition duration-300 hover:scale-110 hover:brightness-125">
+                <span
+                  className="absolute inset-0 animate-ping rounded-full bg-[#5B1E2B]/40"
+                  aria-hidden="true"
+                />
+                <motion.span
+                  className="relative flex items-center justify-center"
+                  animate={{ y: [-2, 2] }}
+                  transition={{ duration: 2.6, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+                >
+                  <MapPin className="size-4" aria-hidden="true" />
+                </motion.span>
+              </span>
             </a>
           </motion.div>
 
