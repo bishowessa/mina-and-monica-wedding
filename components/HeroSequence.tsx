@@ -387,9 +387,6 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
             animate={finalePose}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            <div className="rounded-2xl border border-[#5B1E2B]/30 bg-[#F9F5EF]/92 px-3 py-2 shadow-sm">
-              <CountdownClock />
-            </div>
             <div className="flex flex-row flex-wrap items-center justify-center gap-2">
               <button
                 type="button"
@@ -414,6 +411,9 @@ export default function HeroSequence({ audioRef, musicWantedRef, onComplete }: H
                 <Images className="size-4 shrink-0" aria-hidden="true" />
                 <span className="font-arabic text-lg leading-none">ألبوم الصور</span>
               </button>
+            </div>
+            <div className="rounded-2xl border border-[#5B1E2B]/30 bg-[#F9F5EF]/92 px-3 py-2 shadow-sm">
+              <CountdownClock />
             </div>
           </motion.div>
         </article>
